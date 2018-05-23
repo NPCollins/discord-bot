@@ -1,11 +1,12 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const config = require('./config.json');
 
 client.on('ready', () => {
     console.log('Ready!');
 });
 
-client.login('NDQ4OTAzMjg5NjUyNzcyODY1.DedDZg.Hstox9kalyoMuZ0IvHEiBTnoo2Y');
+client.login(config.token);
 
 client.on('message', message => {
     if (message.content === '!ping') {
