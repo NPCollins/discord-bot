@@ -1,23 +1,23 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const config = require('./config.json');
+const { prefix, token } = require('./config.json');
 
 client.on('ready', () => {
     console.log('Ready!');
 });
 
-client.login(config.token);
+client.login(token);
 
 client.on('message', message => {
-    if (message.content === '!ping') {
+    if (message.content.startsWith(prefix + 'ping')) {
         // send back "Pong." to the channel the message was sent in
         message.channel.send('Pong.');
     }
-    if (message.content === '!pong') {
+    if (message.content.startsWith(prefix + 'pong')) {
         // send back "Pong." to the channel the message was sent in
         message.channel.send('Ping Ping!');
     }
-    if(message.content === '!meme') {
+    if(message.content.startsWith(prefix + 'meme')) {
         // things with the memes
         message.channel.send('Shits not ready yo');
     }
