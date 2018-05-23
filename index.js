@@ -16,4 +16,8 @@ client.on('message', message => {
         // send back "Pong." to the channel the message was sent in
         message.channel.send('Ping Ping!');
     }
+    if(message.content === '!meme') {
+        // things with the memes
+        message.channel.send('Shits not ready yo');
+    }
 });
