@@ -13,9 +13,8 @@ client.on('message', message => {
         // send back "Pong." to the channel the message was sent in
         message.channel.send('Pong.');
     }
-    if (message.content.startsWith(prefix + 'pong')) {
-        // send back "Pong." to the channel the message was sent in
-        message.channel.send('Ping Ping!');
+    if (message.content === `${prefix}server`) {
+        message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`);
     }
     if(message.content.startsWith(prefix + 'meme')) {
         // things with the memes
