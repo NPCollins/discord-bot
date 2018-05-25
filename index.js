@@ -24,7 +24,8 @@ client.on('message', message => {
         message.channel.send('Shits not ready yo');
     }
     if(message.content.startsWith(prefix + 'doggo')) {
-        let request = https.get(url, function(response) {
+
+        https.get(url, function(response) {
             // data is streamed in chunks from the server
             // so we have to handle the "data" event
             let buffer = '',
