@@ -2,6 +2,9 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const { prefix, token } = require('./config.json');
 
+const https = require('https');
+const url = 'https://dog.ceo/api/breeds/image/random';
+
 client.on('ready', () => {
     console.log('Ready!');
 });
@@ -19,5 +22,29 @@ client.on('message', message => {
     if(message.content.startsWith(prefix + 'meme')) {
         // things with the memes
         message.channel.send('Shits not ready yo');
+    }
+    if(message.content.startsWith(prefix + 'doggo')) {
+        let request = https.get(url, function(response) {
+            // data is streamed in chunks from the server
+            // so we have to handle the "data" event
+            let buffer = '',
+                data;
+
+            response.on('data', function(chunk) {
+                buffer += chunk;
+            });
+
+            response.on('end', function(err) {
+                // finished transferring data
+                // dump the raw data
+                console.log(buffer);
+                console.log('\n');
+                data = JSON.parse(buffer);
+
+                if(data.status == 'success') {
+                    message.channel.send(data.message);
+                }
+            });
+        });
     }
 });
