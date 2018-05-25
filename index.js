@@ -3,7 +3,9 @@ const client = new Discord.Client();
 const { prefix, token } = require('./config.json');
 
 const https = require('https');
-const url = 'https://dog.ceo/api/breeds/image/random';
+const http = require('http');
+const doggoUrl = 'https://dog.ceo/api/breeds/image/random';
+const kittyUrl = 'http://aws.random.cat/meow';
 
 client.on('ready', () => {
     console.log('Ready!');
@@ -25,7 +27,7 @@ client.on('message', message => {
     }
     if(message.content.startsWith(prefix + 'doggo')) {
 
-        https.get(url, function(response) {
+        https.get(doggoUrl, function(response) {
             // data is streamed in chunks from the server
             // so we have to handle the "data" event
             let buffer = '',
@@ -45,6 +47,29 @@ client.on('message', message => {
                 if(data.status == 'success') {
                     message.channel.send(data.message);
                 }
+            });
+        });
+    }
+    if(message.content.startsWith(prefix + 'meow')) {
+
+        http.get(kittyUrl, function(response) {
+            // data is streamed in chunks from the server
+            // so we have to handle the "data" event
+            let buffer = '',
+                data;
+
+            response.on('data', function(chunk) {
+                buffer += chunk;
+            });
+
+            response.on('end', function(err) {
+                // finished transferring data
+                // dump the raw data
+                console.log(buffer);
+                console.log('\n');
+                data = JSON.parse(buffer);
+
+                message.channel.send(data.file);
             });
         });
     }
