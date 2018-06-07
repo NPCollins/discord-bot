@@ -44,11 +44,6 @@ client.on('message', message => {
                 console.log('\n');
                 data = JSON.parse(buffer);
 
-                if(data.status == 'success') {
-                    message.channel.send(data.message);
-                }
-            });
-        });
     }
     if(message.content.startsWith(prefix + 'meow')) {
 
