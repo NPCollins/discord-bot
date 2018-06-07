@@ -1,43 +1,18 @@
 const Discord = require('discord.js');
+const cheerio = require('cheerio');
 const client = new Discord.Client();
 const { prefix, token } = require('./config.json');
 
 const https = require('https');
 const http = require('http');
 const doggoUrl = 'https://dog.ceo/api/breeds/image/random';
-const kittyUrl = 'http://aws.random.cat/meow';
+const kittyUrl = 'http://thecatapi.com/api/images/get?format=html';
 
 client.on('ready', () => {
     console.log('Ready!');
 });
 
 client.login(token);
-
-function getBuffer(response){
-
-    let buffer = "";
-    var data;
-
-    response.on('data', addChunk);
-    response.on('end', getErr);
-    
-
-}
-
-function getErr(err){
-
-    console.log(buffer);
-    console.log('\n');
-    data = JSON.parse(buffer);
-    if(data.status == 'success') {
-        message.channel.send(data.message);
-    }
-
-}
-
-function addChuck(chunk){
-    buffer += chunk;
-}
 
 client.on('message', message => {
     if (message.content.startsWith(prefix + 'ping')) {
@@ -53,10 +28,29 @@ client.on('message', message => {
     }
     if(message.content.startsWith(prefix + 'doggo')) {
 
-        https.get(doggoUrl, addBuffer(response));
+        https.get(doggoUrl, function(response) {
+            // data is streamed in chunks from the server
+            // so we have to handle the "data" event
+            let buffer = '',
+                data;
 
+            response.on('data', function(chunk) {
+                buffer += chunk;
+            });
+
+            response.on('end', function() {
+                // finished transferring data
+                // dump the raw data
+                console.log(buffer);
+                console.log('\n');
+                data = JSON.parse(buffer);
+
+                if(data.status == 'success') {
+                    message.channel.send(data.message);
+                }
+            });
+        });
     }
-
     if(message.content.startsWith(prefix + 'meow')) {
 
         http.get(kittyUrl, function(response) {
@@ -74,10 +68,11 @@ client.on('message', message => {
                 // dump the raw data
                 console.log(buffer);
                 console.log('\n');
-                data = JSON.parse(buffer);
-
-                message.channel.send(data.file);
+                const $ = cheerio.load(buffer);
+                // console.log($('img').attr('src'));
+                data = $('img').attr('src');
+                message.channel.send(data);
             });
         });
     }
-}
+});
