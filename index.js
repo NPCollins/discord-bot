@@ -41,4 +41,7 @@ client.on('message', message => {
     else if (command === 'avatar') {
         client.commands.get('avatar').execute(message, args);
     }
+    else if (command === 'flipcoin') {
+        client.commands.get('flipcoin').execute(message, args);
+    }
 });
