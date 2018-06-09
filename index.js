@@ -1,6 +1,14 @@
+const fs = require('fs');
 const Discord = require('discord.js');
-const client = new Discord.Client();
 const { prefix, token } = require('./config.json');
+const client = new Discord.Client();
+client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command);
+}
+// To do: add structure for cooldowns
 
 client.on('ready', () => {
     console.log('Ready!');
@@ -9,15 +17,35 @@ client.on('ready', () => {
 client.login(token);
 
 client.on('message', message => {
-    if (message.content.startsWith(prefix + 'ping')) {
-        // send back "Pong." to the channel the message was sent in
-        message.channel.send('Pong.');
+    //  restarts if message doesnt have the prefix or comes from the bot
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
+
+    const args = message.content.slice(prefix.length).split(' ');
+    const commandName = args.shift().toLowerCase();
+
+    //  allows use of aliases in commands-- restarts if command name isn't a name or alias
+    const command = client.commands.get(commandName)
+        || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+    if (!command) return;
+
+
+    //  check to see that arguments are supplied if needed
+    if (command.args && !args.length) {
+        let reply = `You didn't provide any arguments, ${message.author}!`;
+
+        //  Will describe proper usage if defined in command.
+        if (command.usage) {
+            reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
+        }
+
+        return message.channel.send(reply);
+
     }
-    if (message.content === `${prefix}server`) {
-        message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`);
+
+    //  Makes guildOnly commands only usable in server and not in DMs
+    if (command.guildOnly && message.channel.type !== 'text') {
+        return message.reply('I can\'t execute that command inside DMs!');
     }
-    if(message.content.startsWith(prefix + 'meme')) {
-        // things with the memes
-        message.channel.send('Shits not ready yo');
-    }
+
+    command.execute(message, args);
 });
