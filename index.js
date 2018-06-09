@@ -20,28 +20,9 @@ client.on('message', message => {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
     const args = message.content.slice(prefix.length).split(' ');
-    const command = args.shift().toLowerCase();
-    if (command === 'ping') {
-        client.commands.get('ping').execute(message, args);
-    }
-    else if (command === 'server') {
-        client.commands.get('server').execute(message, args);
-    }
-    else if(command === 'roll') {
-        client.commands.get('roll').execute(message, args);
-    }
-    else if(command === 'doggo') {
+    const commandName = args.shift().toLowerCase();
 
-        client.commands.get('doggo').execute(message, args);
-    }
-    else if(command === 'meow') {
+    const command = client.commands.get(commandName);
 
-        client.commands.get('meow').execute(message, args);
-    }
-    else if (command === 'avatar') {
-        client.commands.get('avatar').execute(message, args);
-    }
-    else if (command === 'flipcoin') {
-        client.commands.get('flipcoin').execute(message, args);
-    }
+    command.execute(message, args);
 });
