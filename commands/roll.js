@@ -3,7 +3,7 @@ module.exports = {
     description: 'Rolls a specified number of d6s',
     execute(message, args) {
         if (args.length === 0) {
-            let roll = Math.floor((Math.random() * 6 + 1));
+            const roll = Math.floor((Math.random() * 6 + 1));
             console.log(roll);
             console.log('\n');
 
@@ -13,10 +13,10 @@ module.exports = {
             message.channel.send('**IT HAS TO BE A NUMBER YA DINGUS**');
         }
         else if(args.length > 0) {
-            let rolls = [];
-            var sum = 0;
-            for(i = 0; i < args[0]; i++) {
-                currentNum = Math.floor((Math.random() * 6 + 1));
+            const rolls = [];
+            let sum = 0;
+            for(let i = 0; i < args[0]; i++) {
+                const currentNum = Math.floor((Math.random() * 6 + 1));
                 rolls.push(currentNum);
                 sum += currentNum;
             }
