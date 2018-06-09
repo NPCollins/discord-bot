@@ -15,22 +15,42 @@ client.on('ready', () => {
 client.login(token);
 
 client.on('message', message => {
-    if (message.content.startsWith(prefix + 'ping')) {
+
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
+
+    const args = message.content.slice(prefix.length).split(' ');
+    const command = args.shift().toLowerCase();
+
+    if (command === 'ping') {
         // send back "Pong." to the channel the message was sent in
         message.channel.send('Pong.');
     }
-    if (message.content === `${prefix}server`) {
+    else if (command === 'server') {
         message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`);
     }
-    if(message.content.startsWith(prefix + 'roll')) {
-        
-        var roll = (Math.random() * 6 + 1);
-        console.log(roll);
-        console.log('/n');
-        
-        message.channel.send('The number is ' + roll);
+    else if(command === 'roll') {
+        if (args.length === 0) {
+            let roll = Math.floor((Math.random() * 6 + 1));
+            console.log(roll);
+            console.log('\n');
+
+            message.channel.send('Your number is **' + roll + '**');
+        }
+        else if (isNaN(args[0])) {
+            message.channel.send('**IT HAS TO BE A NUMBER YA DINGUS**');
+        }
+        else if(args.length > 0) {
+            let rolls = [];
+            var sum = 0;
+            for(i = 0; i < args[0]; i++) {
+                currentNum = Math.floor((Math.random() * 6 + 1));
+                rolls.push(currentNum);
+                sum += currentNum;
+            }
+            message.channel.send('Your numbers are **' + rolls + '**' + '\n' + 'The total is **' + sum + '**');
+        }
     }
-    if(message.content.startsWith(prefix + 'doggo')) {
+    else if(command === 'doggo') {
 
         https.get(doggoUrl, function(response) {
             // data is streamed in chunks from the server
@@ -55,7 +75,7 @@ client.on('message', message => {
             });
         });
     }
-    if(message.content.startsWith(prefix + 'meow')) {
+    else if(command === 'meow') {
 
         http.get(kittyUrl, function(response) {
             // data is streamed in chunks from the server
@@ -77,5 +97,16 @@ client.on('message', message => {
                 message.channel.send(data);
             });
         });
+    }
+    else if (command === 'avatar') {
+        if (!message.mentions.users.size) {
+            return message.channel.send(`Your avatar: ${message.author.displayAvatarURL}`);
+        }
+    
+        const avatarList = message.mentions.users.map(user => {
+            return `${user.username}'s avatar: ${user.displayAvatarURL}`;
+        });
+    
+        message.channel.send(avatarList);
     }
 });
