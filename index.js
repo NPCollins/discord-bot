@@ -22,9 +22,13 @@ client.on('message', message => {
     if (message.content === `${prefix}server`) {
         message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`);
     }
-    if(message.content.startsWith(prefix + 'meme')) {
-        // things with the memes
-        message.channel.send('Shits not ready yo');
+    if(message.content.startsWith(prefix + 'roll')) {
+        
+        var roll = (Math.random() * 6 + 1);
+        console.log(roll);
+        console.log('/n');
+        
+        message.channel.send('The number is ' + roll);
     }
     if(message.content.startsWith(prefix + 'doggo')) {
 
@@ -56,21 +60,20 @@ client.on('message', message => {
         http.get(kittyUrl, function(response) {
             // data is streamed in chunks from the server
             // so we have to handle the "data" event
-            let buffer = '',
-                data;
+            var chunks = [];
 
             response.on('data', function(chunk) {
-                buffer += chunk;
+                chunks.push(chunk);
             });
 
             response.on('end', function(err) {
-                // finished transferring data
-                // dump the raw data
-                console.log(buffer);
+              
+                var body = (Buffer.concat(chunks)).toString();
+                console.log(body.toString);
                 console.log('\n');
-                const $ = cheerio.load(buffer);
+                const html = cheerio.load(body);
                 // console.log($('img').attr('src'));
-                data = $('img').attr('src');
+                const data = html('img').attr('src');
                 message.channel.send(data);
             });
         });
