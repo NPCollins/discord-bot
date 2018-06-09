@@ -20,14 +20,14 @@ client.on('message', message => {
     //  restarts if message doesnt have the prefix or comes from the bot
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    //  allows use of aliases in commands-- restarts if command name isn't a name or alias
-    const command = client.commands.get(commandName)
-         || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-    if (!command) return;
-
-
     const args = message.content.slice(prefix.length).split(' ');
     const commandName = args.shift().toLowerCase();
+
+    //  allows use of aliases in commands-- restarts if command name isn't a name or alias
+    const command = client.commands.get(commandName)
+        || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+    if (!command) return;
+
 
     //  check to see that arguments are supplied if needed
     if (command.args && !args.length) {
